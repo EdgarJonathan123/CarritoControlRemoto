@@ -17,28 +17,37 @@ char datoAnt = 'w';
 long a;
 String cadena;
 
-char btnAuto = 'a';
-char btnMecanico = 'b';
-char btnAdelante = 'c';
-char btnAtras = 'd';
-char btnDerecha = 'e';
-char btnIzquierda = 'f';
-char btnParar = 'g';
-char btnClear = 'h';
-char btnSave = 'i';
-char btnRun = 'j';
-char btnRunInverso = 'k';
+char btnAuto = '0';
+char btnMecanico = '1';
+char btnIzquierda = '2';
+char btnDerecha = '3';
+char btnAdelante = '4';
+char btnAtras = '5';
+char btnParar = '6';
+char btnClear = '7';
+char btnSave = '8';
+char btnRun = '9';
+char btnRunInverso = 'z';
+
+char movimiento;
 
 boolean automatico;
 boolean manual;
 boolean memoria;
+boolean memmoriaInverso;
 
+//String
+String frase = "";
+String fraseAnt = "w";
 //---Declaracion de metodos
 void imprimirDistancia(long dis);
 void Auto();
-void ejecutar();
+void ejecutar(String ruta);
+void ejecutarInverso(String ruta);
 void mecanico();
 void verificar();
+void mover(char movimiento);
+void leerSerial();
 
 void setup()
 {
@@ -57,7 +66,6 @@ void setup()
 String readString;
 void loop()
 {
-
   verificar();
 
   if (manual)
@@ -70,8 +78,32 @@ void loop()
   }
   else if (memoria)
   {
-    ejecutar();
+    leerSerial();
+    String ruta = man.ejecutarRuta(frase);
+    if (ruta != "z")
+    {
+      ejecutar(ruta);
+    }
+    else
+    {
+      Serial.println("Hubo un error al ejecutar la ruta :V");
+    }
   }
+  else if (memmoriaInverso)
+  {
+    leerSerial();
+    String ruta = man.ejecutarRuta(frase);
+    if (ruta != "z")
+    {
+      ejecutarInverso(ruta);
+    }
+    else
+    {
+      Serial.println("Hubo un error al ejecutar la ruta :V");
+    }
+  }
+
+  datoAnt = dato;
 }
 
 void verificar()
@@ -80,7 +112,7 @@ void verificar()
   if (mySerial.available())
   {
     dato = mySerial.read();
-    Serial.print("Lectura blootooh");
+    Serial.print("Lectura blootooh: ");
     Serial.println(dato);
   }
 
@@ -89,64 +121,44 @@ void verificar()
     automatico = true;
     manual = false;
     memoria = false;
+    memmoriaInverso = false;
   }
   else if (dato == btnMecanico)
   {
     automatico = false;
     manual = true;
     memoria = false;
+    memmoriaInverso = false;
   }
   else if (dato == btnRun)
   {
     automatico = false;
     manual = false;
     memoria = true;
+    memmoriaInverso = false;
+  }
+  else if (dato == btnRunInverso)
+  {
+    automatico = false;
+    manual = false;
+    memoria = false;
+    memmoriaInverso = true;
   }
 }
 void mecanico()
 {
-
-  if (dato == btnDerecha)
-  {
-    carro.Detener();
-    carro.Derecha(255);
-    delay(500);
-    carro.Detener();
-  }
-
-  if (dato == btnIzquierda)
-  {
-    carro.Detener();
-    carro.Izquierda(255);
-    delay(500);
-    carro.Detener();
-  }
-
-  if (dato == btnAdelante)
-  {
-    carro.Adelante(255);
-    delay(500);
-  }
-
-  if (dato == btnAtras)
-  {
-    carro.Atras(255);
-    delay(500);
-  }
-
+  //mover(dato);
+  //para grabar y guardar las rutas
   if (datoAnt != dato)
   {
     man.grabar(dato);
-    
-  }
-
-  if(dato == btnParar){
-    carro.Detener();
   }
 
   if (dato == btnSave)
   {
 
+    leerSerial();
+    man.guardarRuta(frase);
   }
 }
 
@@ -192,12 +204,119 @@ void Auto()
   }
 }
 
-void ejecutar()
+void ejecutar(String ruta)
 {
+
+  for (size_t i = 0; i < ruta.length(); i++)
+  {
+    movimiento = ruta.charAt(i);
+    Serial.print("Se obtuvo el caracter ");
+    Serial.println(movimiento);
+    mover(movimiento);
+  }
+}
+
+void ejecutarInverso(String ruta)
+{
+  int tamanio = ruta.length() - 1;
+  for (int i = tamanio; i > -1; i--)
+  {
+    movimiento = ruta.charAt(i);
+    Serial.print("Se leyo la letra: Ejcutar inverso ");
+    Serial.println(ruta);
+    Serial.println(movimiento);
+    mover(movimiento);
+  }
 }
 
 void imprimirDistancia(long dis)
 { // funcion para imprimir la distancia que nos da el sensor ultrasonico
   Serial.print(dis);
   Serial.println("cm");
+}
+
+void leerSerial()
+{
+  // if (frase != fraseAnt)
+  // {
+  frase = "";
+  for (size_t i = 0; i < 4; i++)
+  {
+
+    char letra = mySerial.read();
+
+    frase += letra;
+  }
+
+  Serial.print("String Recibido: ");
+  Serial.println(frase); //muestra datos recibidos
+  dato = btnMecanico;
+  // }
+
+  // while (mySerial.available() > 0)
+  // {
+  //   Serial.println("Estamos en el bucle alv no salimos :(");
+
+  //   if (letra == '\r')
+  //   {
+  //     continue;
+  //   }
+  //   else if (letra == '\0')
+  //   {
+  //     endline = true;
+  //     break;
+  //   }
+  //   else
+  //   {
+  //   }
+  // }
+}
+
+void mover(char movimiento)
+{
+
+  if (movimiento == btnDerecha)
+  {
+    Serial.println("Ejecutando Derecha");
+    carro.Detener();
+    carro.Derecha(255);
+    delay(1000);
+    carro.Detener();
+  }
+
+  if (movimiento == btnIzquierda)
+  {
+    Serial.println("Ejecutando Izquierda");
+    carro.Detener();
+    carro.Izquierda(255);
+    delay(1000);
+    carro.Detener();
+  }
+
+  if (movimiento == btnAdelante)
+  {
+    a = sr04.Distance();
+    imprimirDistancia(a);
+    // delay(1000);
+    while (a > 7)
+    {
+      a = sr04.Distance();
+      imprimirDistancia(a);
+      Serial.println("Ejecutando Adelante");
+      carro.Adelante(255);
+    }
+  }
+
+  if (movimiento == btnAtras)
+  {
+    Serial.println("Ejecutando Atras");
+    carro.Atras(255);
+    delay(1000);
+  }
+
+  if (movimiento == btnParar)
+  {
+    Serial.println("Ejecutando Parar");
+    carro.Detener();
+  }
 }
