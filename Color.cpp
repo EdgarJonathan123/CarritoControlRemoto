@@ -1,14 +1,14 @@
 #include "Color.h"
 
-Color::Color(int a, int b, int c, int d, int e, int verde, int azul, int rojo) { //Constructor setea los pines a usar;
+Color::Color(int a, int b, int c, int d, int e, int azul, int verde, int rojo) { //Constructor setea los pines a usar;
   s0=a; // a pin 22
   s1=b; // a pin 24
   s2=c; // a pin 26
   s3=d; // a pin 28
   sensorData=e; // out a pin 30
   ledRed=rojo; //pin 53
-  ledGreen=verde; //pin 50
-  ledBlue=azul; // pint 52
+  ledGreen=verde; //pin 52
+  ledBlue=azul; // pint 50
   pinMode(s0,OUTPUT);
   pinMode(s1,OUTPUT);
   pinMode(s2,OUTPUT);
@@ -47,14 +47,14 @@ void Color::analizarColor(){
    Serial.print(dataB);
    Serial.println(" ");
    delay(20);
-   delay(2000);
+   //delay(2000);
 }
 
 
 bool Color::esRojo()
 {
-  if((dataR<18 && dataR>5) && (dataG<49 && dataG>23) && (dataB<70 && dataB>34))
-  {
+  if((dataR<20 && dataR>7) && (dataG<54 && dataG>21) && (dataB<53 && dataB>22)) 
+  {//(dataR<54 && dataR>37) && (dataG<174 && dataG>112) && (dataB<170 && dataB>116)
     Serial.println("El color es Rojo");
     analogWrite(ledRed,255);
     analogWrite(ledGreen,0);
@@ -69,8 +69,10 @@ bool Color::esRojo()
 
 bool Color::esVerde()
 {
-  if((dataR<53 && dataR>47) && (dataG<44 && dataG>38) && (dataB<34 && dataB>28))
-  {
+  if((dataR<32 && dataR>19) && (dataG<33 && dataG>18) && (dataB<60  && dataB>36))
+  { //(dataR<160 && dataR>140) && (dataG<130 && dataG>115) && (dataB<180 && dataB>160)
+    //(dataR<245 && dataR>125) && (dataG<200 && dataG>103) && (dataB<286 && dataB>147)
+    //(dataR<166 && dataR>89) && (dataG<127 && dataG>73) && (dataB<180 && dataB>104)
     Serial.println("El color es Verde");
     analogWrite(ledRed,0);
     analogWrite(ledGreen,255);
@@ -85,8 +87,10 @@ bool Color::esVerde()
 
 bool Color::esAzul()
 {
-  if((dataR<103 && dataR>90) && (dataG<41 && dataG>27) && (dataB<88 && dataB>73))
-  {
+  if((dataR<54 && dataR>27) && (dataG<68 && dataG>33) && (dataB<56 && dataB>26))
+  { //(dataR<414 && dataR>183) && (dataG<483 && dataG>217) && (dataB<380 && dataB>171)
+    //(dataR<216 && dataR>116) && (dataG<259 && dataG>138) && (dataB<204 && dataB>107)
+    //(dataR<288 && dataR>137) && (dataG<316 && dataG>155) && (dataB<236 && dataB>119)
     Serial.println("El color es Azul");
     analogWrite(ledRed,0);
     analogWrite(ledGreen,0);

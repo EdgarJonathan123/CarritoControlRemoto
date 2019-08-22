@@ -45,10 +45,16 @@ void Carro::Derecha(int vel){ // MOTOR DERECHO HACIA ADELANTE
   analogWrite(ENA, vel); // velocidad mediante PWM en ENA
   digitalWrite(IN1, LOW); // IN1 a cero logico
   digitalWrite(IN2, HIGH);  // IN2 a uno logico
+  analogWrite(ENB, vel);  // velocidad mediante PWM en ENB
+  digitalWrite(IN3, HIGH); // IN3 a uno logico
+  digitalWrite(IN4, LOW);  // IN4 a cero logico
 }
 
 void Carro::Izquierda(int vel){ // MOTOR IZQUIERDO HACIA ADELANTE
   analogWrite(ENB, vel);  // velocidad mediante PWM en ENB
   digitalWrite(IN3, LOW); // IN3 a cero logico
   digitalWrite(IN4, HIGH);  // IN4 a uno logico
+  analogWrite(ENA, vel); // velocidad mediante PWM en ENA
+  digitalWrite(IN1, HIGH); // IN1 a uno logico
+  digitalWrite(IN2, LOW);  // IN2 a cero logico
 }

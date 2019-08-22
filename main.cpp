@@ -1,4 +1,4 @@
-#include <Arduino.h>
+
 #include <ModoManual.h>
 #include "SR04.h"
 #include "Color.h"
@@ -125,6 +125,7 @@ void verificar()
   }
   else if (dato == btnMecanico)
   {
+   // man.camino="";
     automatico = false;
     manual = true;
     memoria = false;
@@ -144,11 +145,14 @@ void verificar()
     memoria = false;
     memmoriaInverso = true;
   }
+  else if (dato == btnClear)
+  {
+    man.limpiar();
+  }
 }
 void mecanico()
 {
-  //mover(dato);
-  //para grabar y guardar las rutas
+   //para grabar y guardar las rutas
   if (datoAnt != dato)
   {
     man.grabar(dato);
@@ -156,10 +160,49 @@ void mecanico()
 
   if (dato == btnSave)
   {
-
     leerSerial();
     man.guardarRuta(frase);
   }
+
+  if (dato == btnDerecha)
+  {
+    Serial.println("Ejecutando Dxerecha");
+    carro.Detener();
+    carro.Derecha(255);
+    delay(700);
+    dato = btnParar;
+  }
+
+  if (dato == btnIzquierda)
+  {
+    Serial.println("Ejecutando Izqxuierda");
+    carro.Detener();
+    carro.Izquierda(255);
+    delay(700);
+    //carro.Detener();
+    dato = btnParar;
+  }
+
+  if (dato == btnAdelante)
+  {
+    Serial.println("Ejecutando Adexlante");
+    carro.Adelante(255);
+  }
+
+  if (dato == btnAtras)
+  {
+    Serial.println("Ejecutando Aktras");
+    carro.Atras(255);
+    //delay(1000);
+  }
+
+  if (dato == btnParar)
+  {
+    Serial.println("Ejecutandho Parar");
+    carro.Detener();
+  }
+
+ 
 }
 
 void Auto()
@@ -173,12 +216,15 @@ void Auto()
   Serial.println(readString);
   */
 
+  //imprimirDistancia(a);
+  //delay(1000);
+
   a = sr04.Distance();
   imprimirDistancia(a);
-  delay(1000);
 
-  if (a <= 7)
+  if (a < 14)
   { // si hay un obstaculo a 5cm de distancia entra a esta estructura de control
+    //a = sr04.Distance();
 
     carro.Detener();
     color.analizarColor();
@@ -189,19 +235,34 @@ void Auto()
     }
     if (color.esVerde())
     { //Mover Izquierda
+
+      carro.Atras(255);
+      delay(130);
       carro.Izquierda(255);
-      delay(500);
+      delay(700);
+      carro.Detener();
     }
     if (color.esAzul())
     { //Mover Derecha
+      carro.Atras(255);
+      delay(130);
       carro.Derecha(255);
-      delay(500);
+      delay(700);
+      carro.Detener();
     }
   }
   else
   { // Si no hay obstaculo el carro avanza hacia adelante
     carro.Adelante(255);
   }
+
+  if (dato == btnParar)
+  {
+    Serial.println("Ejecutandho Parar");
+    carro.Detener();
+    dato = btnParar;
+  }
+
 }
 
 void ejecutar(String ruta)
@@ -237,39 +298,17 @@ void imprimirDistancia(long dis)
 
 void leerSerial()
 {
-  // if (frase != fraseAnt)
-  // {
+
   frase = "";
   for (size_t i = 0; i < 4; i++)
   {
-
     char letra = mySerial.read();
-
     frase += letra;
   }
 
   Serial.print("String Recibido: ");
   Serial.println(frase); //muestra datos recibidos
   dato = btnMecanico;
-  // }
-
-  // while (mySerial.available() > 0)
-  // {
-  //   Serial.println("Estamos en el bucle alv no salimos :(");
-
-  //   if (letra == '\r')
-  //   {
-  //     continue;
-  //   }
-  //   else if (letra == '\0')
-  //   {
-  //     endline = true;
-  //     break;
-  //   }
-  //   else
-  //   {
-  //   }
-  // }
 }
 
 void mover(char movimiento)
@@ -298,7 +337,7 @@ void mover(char movimiento)
     a = sr04.Distance();
     imprimirDistancia(a);
     // delay(1000);
-    while (a > 7)
+    while (a > 14)
     {
       a = sr04.Distance();
       imprimirDistancia(a);
@@ -312,6 +351,7 @@ void mover(char movimiento)
     Serial.println("Ejecutando Atras");
     carro.Atras(255);
     delay(1000);
+    carro.Detener();
   }
 
   if (movimiento == btnParar)
