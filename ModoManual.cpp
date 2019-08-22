@@ -1,8 +1,8 @@
-#include <ModoManual.h>
+#include "ModoManual.h" 
+
 
 ModoManual::ModoManual(/* args */)
 {
-    EEPROM.update(0, eeAddress);
     rutaActual = true;
 }
 
@@ -58,15 +58,13 @@ void ModoManual::guardarRuta1(String Nombre)
     Serial.println("Guardando -> ruta 1");
     r.caminos = camino;
     r.name = Nombre;
-    eeAddress = sizeof(r);
+
+    EEPROM.put(0, r);
 
     Serial.print("camino: ");
     Serial.println(camino);
     Serial.print("Nombre: ");
     Serial.println(Nombre);
-
-    EEPROM.update(0, eeAddress);
-    EEPROM.put(1, r);
 
     // Serial.print("Tamanio r1 ");
     // Serial.println(eeAddress);
@@ -80,13 +78,13 @@ void ModoManual::guardarRuta2(String Nombre)
     r.caminos = camino;
     r.name = Nombre;
 
+    EEPROM.put(500, r);
+
     Serial.print("camino: ");
     Serial.println(camino);
     Serial.print("Nombre: ");
     Serial.println(Nombre);
 
-    eeAddress = EEPROM.read(0) + 2;
-    EEPROM.put(eeAddress, r);
     camino = "";
 }
 
@@ -112,9 +110,8 @@ String ModoManual::ejecutarRuta(String Nombre)
 
 String ModoManual::ejecutarRuta1(String Nombre)
 {
-    eeAddress = 1;
     Serial.println("Obteniendo .... Ruta1 ->");
-    EEPROM.get(eeAddress, r);
+    EEPROM.get(0, r);
 
     if (r.name == Nombre)
     {
@@ -137,8 +134,7 @@ String ModoManual::ejecutarRuta1(String Nombre)
 String ModoManual::ejecutarRuta2(String Nombre)
 {
     Serial.println("Obteniendo .... Ruta2->");
-    eeAddress = EEPROM.read(0) + 2;
-    EEPROM.get(eeAddress, r);
+    EEPROM.get(500, r);
 
     if (r.name == Nombre)
     {

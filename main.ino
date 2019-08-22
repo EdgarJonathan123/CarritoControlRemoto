@@ -1,5 +1,4 @@
-#include <Arduino.h>
-#include <ModoManual.h>
+#include "ModoManual.h"
 #include "SR04.h"
 #include "Color.h"
 #include "Carro.h"
@@ -12,7 +11,7 @@ SR04 sr04 = SR04(12, 13);                            // ECHO_PIN,TRIG_PIN
 Color color = Color(22, 24, 26, 28, 30, 50, 52, 53); //s0,s1,s2,s3,out,verde,azul,rojo
 Carro carro = Carro(2, 4, 3, 6, 7, 5);               //IN1, IN2, ENA, IN3, IN4, ENA
 
-char dato;
+char dato = '1';
 char datoAnt = 'w';
 long a;
 String cadena;
@@ -29,7 +28,7 @@ char btnSave = '8';
 char btnRun = '9';
 char btnRunInverso = 'z';
 
-char movimiento;
+char movimiento = 'W';
 
 boolean automatico;
 boolean manual;
@@ -147,8 +146,48 @@ void verificar()
 }
 void mecanico()
 {
-  //mover(dato);
+
+
+  if (dato == btnDerecha)
+  {
+    Serial.println("Ejecutando Derecha");
+    carro.Detener();
+    carro.Derecha(255);
+    delay(1000);
+    carro.Detener();
+  }
+
+  if (dato == btnIzquierda)
+  {
+    Serial.println("Ejecutando Izquierda");
+    carro.Detener();
+    carro.Izquierda(255);
+    delay(1000);
+    carro.Detener();
+  }
+
+  if (dato == btnAdelante)
+  {
+    Serial.println("Ejecutando Adelante");
+    carro.Adelante(255);
+  }
+
+
+  if (dato == btnAtras)
+  {
+    Serial.println("Ejecutando Atras");
+    carro.Atras(255);
+    delay(1000);
+  }
+
+  if (dato == btnParar)
+  {
+    Serial.println("Ejecutando Parar");
+    carro.Detener();
+  }
+
   //para grabar y guardar las rutas
+
   if (datoAnt != dato)
   {
     man.grabar(dato);
@@ -156,7 +195,6 @@ void mecanico()
 
   if (dato == btnSave)
   {
-
     leerSerial();
     man.guardarRuta(frase);
   }
@@ -165,12 +203,12 @@ void mecanico()
 void Auto()
 {
   /*
-   while (mySerial.available()) {
+    while (mySerial.available()) {
     delay(2);  //delay to allow byte to arrive in input buffer
     char c = mySerial.read();
     readString += c;
-  }
-  Serial.println(readString);
+    }
+    Serial.println(readString);
   */
 
   a = sr04.Distance();
@@ -214,6 +252,7 @@ void ejecutar(String ruta)
     Serial.println(movimiento);
     mover(movimiento);
   }
+  dato = btnMecanico;
 }
 
 void ejecutarInverso(String ruta)
@@ -227,6 +266,8 @@ void ejecutarInverso(String ruta)
     Serial.println(movimiento);
     mover(movimiento);
   }
+
+  dato = btnMecanico;
 }
 
 void imprimirDistancia(long dis)
@@ -298,7 +339,7 @@ void mover(char movimiento)
     a = sr04.Distance();
     imprimirDistancia(a);
     // delay(1000);
-    while (a > 7)
+    while (a >= 7)
     {
       a = sr04.Distance();
       imprimirDistancia(a);

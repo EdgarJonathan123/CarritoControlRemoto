@@ -18,7 +18,6 @@ struct Ruta
 class ModoManual
 {
 private:
-	byte eeAddress = 0;
 	String camino = "";
 	boolean rutaActual;
 	Ruta r;
