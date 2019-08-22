@@ -125,7 +125,7 @@ void verificar()
   }
   else if (dato == btnMecanico)
   {
-   // man.camino="";
+    man.camino="";
     automatico = false;
     manual = true;
     memoria = false;
@@ -166,7 +166,7 @@ void mecanico()
 
   if (dato == btnDerecha)
   {
-    Serial.println("Ejecutando Dxerecha");
+   // Serial.println("Ejecutando Dxerecha");
     carro.Detener();
     carro.Derecha(255);
     delay(700);
@@ -175,7 +175,7 @@ void mecanico()
 
   if (dato == btnIzquierda)
   {
-    Serial.println("Ejecutando Izqxuierda");
+   // Serial.println("Ejecutando Izqxuierda");
     carro.Detener();
     carro.Izquierda(255);
     delay(700);
@@ -185,20 +185,20 @@ void mecanico()
 
   if (dato == btnAdelante)
   {
-    Serial.println("Ejecutando Adexlante");
+   // Serial.println("Ejecutando Adexlante");
     carro.Adelante(255);
   }
 
   if (dato == btnAtras)
   {
-    Serial.println("Ejecutando Aktras");
+    //Serial.println("Ejecutando Aktras");
     carro.Atras(255);
     //delay(1000);
   }
 
   if (dato == btnParar)
   {
-    Serial.println("Ejecutandho Parar");
+   // Serial.println("Ejecutandho Parar");
     carro.Detener();
   }
 
@@ -237,17 +237,17 @@ void Auto()
     { //Mover Izquierda
 
       carro.Atras(255);
-      delay(130);
+      delay(70); //130 arriba en el segundo nivel
       carro.Izquierda(255);
-      delay(700);
+      delay(1000); //700 arriba en el segundo nivel
       carro.Detener();
     }
     if (color.esAzul())
     { //Mover Derecha
       carro.Atras(255);
-      delay(130);
+      delay(70);
       carro.Derecha(255);
-      delay(700);
+      delay(1000);
       carro.Detener();
     }
   }
@@ -337,7 +337,7 @@ void mover(char movimiento)
     a = sr04.Distance();
     imprimirDistancia(a);
     // delay(1000);
-    while (a > 14)
+    while (a > 18)
     {
       a = sr04.Distance();
       imprimirDistancia(a);
